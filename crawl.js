@@ -1,4 +1,4 @@
-const crawl = async (url) => {
+const crawl = async (url, siteMap = {}) => {
   const urlObj = new URL(url);
 
   // Crawl the site
@@ -6,7 +6,7 @@ const crawl = async (url) => {
   const body = await response.text();
 
   const links = body.match(/href="\/[^"]*"/g);
-  const onlyLinks = links.map((link) => {
+  const onlyLinks = links?.map((link) => {
     return link.replace('href="', '').replace('"', '');
   });
 
@@ -15,7 +15,17 @@ const crawl = async (url) => {
     (link) => link !== urlObj.pathname
   );
 
-  return { [urlObj.pathname]: dedupedLinks };
+  siteMap[urlObj.pathname] = dedupedLinks;
+
+  // Recursively crawl the site
+  for (const link of dedupedLinks) {
+    if (!siteMap[link]) {
+      console.log(`Crawling ${urlObj.origin}${link}`);
+      await crawl(`${urlObj.origin}${link}`, siteMap);
+    }
+  }
+
+  return siteMap
 };
 
 module.exports = { crawl };
