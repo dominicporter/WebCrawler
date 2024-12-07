@@ -35,3 +35,9 @@ AC:
 
 
 ## Further work
+- Consider what to do with query params. Some query params do change the content of a page (and therefore may change the links visible) so it may be necessary to crawl the same page multiple times with different query params. But user may know for a given site that re-fetching with different params is a waste of time. Perhaps add an optional parameter like `ignoreQueryParams`.
+- Breadth First vs Depth First search. See TODO comment in code. The slightly naive implementation needs a hacky check to make sure we don't crawl the same page twice (while waiting for the branch it is on to return). Breadth First would solve this probably.
+- How Deep? It would be useful to have an optional parameter to specify how many levels of search we want to do, both for faster results if user is only interested in the main links, and to reduce memory usage. Some sites could have hundreds or thousands of links which would make the table really big.
+- Comments in source are currently parsed like any other href - perhaps we want to ignore links that are commented out?
+- Visualisation - we could display the output in a nicer 'tree-like' format
+- JS links - consider using a headless browser or virtual DOM to see if there are any links encoded in logic. Possibly even crawl the JS files themselves.
