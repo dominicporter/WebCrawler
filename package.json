@@ -12,5 +12,8 @@
   "description": "",
   "dependencies": {
     "jest": "^29.7.0"
+  },
+  "devDependencies": {
+    "jest-fetch-mock": "^3.0.3"
   }
 }
