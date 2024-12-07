@@ -9,12 +9,10 @@ describe('WebCrawler', () => {
     it('should fetch the page and return the links', async () => {
         // Arrange
         const sampleHtml = `
-            <html>
-                <body>
+            <html><body>
                     <a href="/foo">Foo</a>
                     <a href="/bar">Bar</a>
-                </body>
-            </html>
+            </body></html>
         `;
         fetch.mockResponseOnce(sampleHtml);
 
@@ -29,14 +27,12 @@ describe('WebCrawler', () => {
     it('should not include duplicate links or links to itself', async () => {
         // Arrange
         const sampleHtml = `
-            <html>
-                <body>
+            <html><body>
                     <a href="/foo">Foo</a>
                     <a href="/">Home</a>
                     <a href="/bar">Bar</a>
                     <a href="/bar">Bar</a>
-                </body>
-            </html>
+            </body></html>
         `;
         fetch.mockResponseOnce(sampleHtml);
 
@@ -47,6 +43,24 @@ describe('WebCrawler', () => {
         expect(typeof result).toBe('object');
         expect(result['/']).toEqual(['/foo', '/bar']);
     });
-    it.todo('should not fetch external links');
+    it('should only include internal page links', async () => {
+        // Arrange
+        const sampleHtml = `
+            <html><body>
+                    <a href="/foo">Foo</a>
+                    <a href="https://foo.com/bar">Bar</a>
+                    <a href="#bar">Bar</a>
+                    <a href="/bar">Bar</a>
+            </body></html>
+        `;
+        fetch.mockResponseOnce(sampleHtml);
+
+        // Act
+        const result = await crawl('https://www.asdfasdfasdf.com');
+
+        // Assert
+        expect(typeof result).toBe('object');
+        expect(result['/']).toEqual(['/foo', '/bar']);
+    });
     it.todo('should fetch the page and return the links recursively');
 });
